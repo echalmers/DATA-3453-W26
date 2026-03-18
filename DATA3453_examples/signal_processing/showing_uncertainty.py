@@ -30,7 +30,7 @@ plt.title('original data with Seaborn 95% CI')
 
 
 # fit a KDE to the data.
-# YOUR CODE HERE
+kde = # YOUR CODE HERE
 
 # plot the KDE estimates of P(x)
 fig, ax = plt.subplots(2, 1, sharex=True)
