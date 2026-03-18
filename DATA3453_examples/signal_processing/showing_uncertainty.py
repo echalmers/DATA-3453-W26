@@ -30,11 +30,14 @@ plt.title('original data with Seaborn 95% CI')
 
 
 # fit a KDE to the data.
-kde = # YOUR CODE HERE
+kde = KernelDensity(bandwidth=2)
+kde.fit(df[['x']])
 
 # plot the KDE estimates of P(x)
 fig, ax = plt.subplots(2, 1, sharex=True)
-# YOUR CODE HERE
+x_vals = np.linspace(0, 40, 100)
+ax[1].plot(x_vals, np.exp(kde.score_samples(x_vals.reshape(-1, 1))))
+ax[1].set_title('KDE estimates of P(x)')
 
 # re-create the CI (using bootstrapping), but now divide the CI by KDE estimates of P(x)
 x_vals = df['x'].sort_values().unique()
@@ -45,8 +48,8 @@ kde_probability_normalized = kde_probability / kde_probability.max()
 CIs = np.array([bootstrap_CI(df.loc[df['x'] == x, 'y'], n_resamples=100) for x in x_vals])
 # push the upper and lower CI limits away from the mean line
 CIs -= y_mean_vals.reshape(-1, 1)
-CIs[:, 0] /= kde_probability_normalized
-CIs[:, 1] /= kde_probability_normalized
+CIs[:, 0] /= (kde_probability_normalized ** 2)
+CIs[:, 1] /= (kde_probability_normalized ** 2)
 CIs += y_mean_vals.reshape(-1, 1)
 
 # plot the new CIs
@@ -57,14 +60,16 @@ plt.fill_between(x_vals, CIs[:, 0], CIs[:, 1], alpha=0.5)
 
 
 # fit a gaussian process to the data
-kernel = RationalQuadratic(length_scale=1) # RBF(length_scale=2) #+ WhiteKernel(noise_level=10)
+kernel = RationalQuadratic(length_scale=2) # RBF(length_scale=2) #+ WhiteKernel(noise_level=10)
 gp = GaussianProcessRegressor(kernel=kernel, normalize_y=True)  # alpha=(df['alpha'].values * 2)**3)
 gp.fit(df[['x']], df[['y']])
 y_mean, y_std = gp.predict(np.linspace(0, 40, 100).reshape(-1, 1), return_std=True)
 
 
 # plot the mean and standard deviation predicted by the guassian process regression
-# YOUR CODE HERE
-
+plt.figure()
+plt.scatter(df.x, df.y, alpha=0.2)
+plt.plot(np.linspace(0, 40, 100), y_mean)
+plt.fill_between(np.linspace(0, 40, 100), y_mean - y_std, y_mean + y_std, alpha=0.5)
 
 plt.show()

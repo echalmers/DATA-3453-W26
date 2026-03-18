@@ -51,4 +51,20 @@ plt.show()
 
 
 # Use PCA and T-SNE to reduce the high-dimensional digits to 2-dimensions so they can be plotted
-# YOUR CODE HERE
+pca = PCA(n_components=2)
+data_pca = pca.fit_transform(digits.data)
+tsne = TSNE(n_components=2)
+data_tsne = tsne.fit_transform(digits.data)
+
+plt.subplot(2, 1, 1)
+df_pca = pd.DataFrame(data_pca, columns=['dim1', 'dim2'])
+df_pca['digit'] = y.astype(str)
+sns.scatterplot(df_pca, x='dim1', y='dim2', hue='digit')
+plt.title('PCA results')
+
+plt.subplot(2, 1, 2)
+df_tsne = pd.DataFrame(data_tsne, columns=['dim1', 'dim2'])
+df_tsne['digit'] = y.astype(str)
+sns.scatterplot(df_tsne, x='dim1', y='dim2', hue='digit')
+plt.title('T-SNE results')
+plt.show()
