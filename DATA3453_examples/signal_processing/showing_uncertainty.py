@@ -60,8 +60,8 @@ plt.fill_between(x_vals, CIs[:, 0], CIs[:, 1], alpha=0.5)
 
 
 # fit a gaussian process to the data
-kernel = RationalQuadratic(length_scale=2) # RBF(length_scale=2) #+ WhiteKernel(noise_level=10)
-gp = GaussianProcessRegressor(kernel=kernel, normalize_y=True)  # alpha=(df['alpha'].values * 2)**3)
+kernel = RationalQuadratic(length_scale=1) 
+gp = GaussianProcessRegressor(kernel=kernel, normalize_y=True) 
 gp.fit(df[['x']], df[['y']])
 y_mean, y_std = gp.predict(np.linspace(0, 40, 100).reshape(-1, 1), return_std=True)
 
